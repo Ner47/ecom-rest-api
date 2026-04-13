@@ -1,7 +1,7 @@
 const expressLoader = require("./express");
-const passportLoader = require("./passport.js");
+const passportLoader = require("./passport");
 const routerLoader = require("../routes");
-const swaggerLoader = require("./swagger.js");
+const swaggerLoader = require("./swagger");
 
 module.exports = async (app) => {
   const expressApp = await expressLoader(app);
