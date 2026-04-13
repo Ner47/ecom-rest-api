@@ -2,6 +2,10 @@ const express = require("express");
 const router = express.Router();
 
 const UserService = require("../services/UserService");
+const {
+  ensureAuthenticated,
+  ensureAuthorizedUser,
+} = require("../middlewares/auth");
 const UserServiceInstance = new UserService();
 
 module.exports = (app, passport) => {
@@ -18,18 +22,23 @@ module.exports = (app, passport) => {
     }
   });
 
-  router.put("/:userId", async (req, res, next) => {
-    try {
-      const { userId } = req.params;
-      const data = req.body;
-
-      const response = await UserServiceInstance.update({
-        id: userId,
-        ...data,
-      });
-      res.status(200).send(response);
-    } catch (err) {
-      next(err);
-    }
-  });
+  router.put(
+    "/:userId",
+    ensureAuthenticated,
+    ensureAuthorizedUser,
+    async (req, res, next) => {
+      try {
+        const { userId } = req.params;
+        const data = req.body;
+        console.log(req.user.id);
+        const response = await UserServiceInstance.update({
+          id: req.user.id,
+          ...data,
+        });
+        res.status(200).send(response);
+      } catch (err) {
+        next(err);
+      }
+    },
+  );
 };
