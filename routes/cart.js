@@ -1,12 +1,11 @@
 const express = require("express");
-const router = express.Router();
 const { ensureAuthenticated } = require("../middlewares/auth");
 
 const CartService = require("../services/CartService");
 const CartServiceInstance = new CartService();
 
-module.exports = (app, passport) => {
-  app.use("/carts", router);
+module.exports = (passport) => {
+  const router = express.Router();
 
   router.get("/mine", async (req, res, next) => {
     try {
@@ -82,4 +81,6 @@ module.exports = (app, passport) => {
       next(err);
     }
   });
+
+  return router;
 };

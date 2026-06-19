@@ -1,11 +1,9 @@
 const express = require("express");
-const router = express.Router();
-
 const AuthService = require("../services/AuthService");
 const AuthServiceInstance = new AuthService();
 
-module.exports = (app, passport) => {
-  app.use("/auth", router);
+module.exports = (passport) => {
+  const router = express.Router();
 
   router.post("/register", async (req, res, next) => {
     try {
@@ -35,4 +33,6 @@ module.exports = (app, passport) => {
       }
     },
   );
+
+  return router;
 };

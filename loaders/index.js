@@ -8,11 +8,11 @@ module.exports = async (app) => {
 
   const passport = await passportLoader(expressApp);
 
-  await routerLoader(app, passport);
+  await routerLoader(expressApp, passport);
 
-  await swaggerLoader(app);
+  await swaggerLoader(expressApp);
 
-  app.use((err, req, res, next) => {
+  expressApp.use((err, req, res, next) => {
     const { message, status } = err;
     return res.status(status).send({ message });
   });

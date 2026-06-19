@@ -1,12 +1,11 @@
 const express = require("express");
-const router = express.Router();
 const { ensureAuthenticated } = require("../middlewares/auth");
 
 const ProductService = require("../services/ProductService");
 const ProductServiceInstance = new ProductService();
 
-module.exports = (app, passport) => {
-  app.use("/products", router);
+module.exports = (passport) => {
+  const router = express.Router();
 
   router.post("/", async (req, res, next) => {
     try {
@@ -65,4 +64,6 @@ module.exports = (app, passport) => {
       next(err);
     }
   });
+
+  return router;
 };

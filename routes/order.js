@@ -1,11 +1,10 @@
 const express = require("express");
-const router = express.Router();
 
 const OrderService = require("../services/OrderService");
 const OrderServiceInstance = new OrderService();
 
-module.exports = (app, passport) => {
-  app.use("/orders", router);
+module.exports = (passport) => {
+  const router = express.Router();
 
   router.get("/", async (req, res, next) => {
     try {
@@ -27,4 +26,6 @@ module.exports = (app, passport) => {
       next(err);
     }
   });
+
+  return router;
 };

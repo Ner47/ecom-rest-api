@@ -1,6 +1,4 @@
 const express = require("express");
-const router = express.Router();
-
 const UserService = require("../services/UserService");
 const {
   ensureAuthenticated,
@@ -8,8 +6,8 @@ const {
 } = require("../middlewares/auth");
 const UserServiceInstance = new UserService();
 
-module.exports = (app, passport) => {
-  app.use("/users", router);
+module.exports = (passport) => {
+  const router = express.Router();
 
   router.get("/:userId", async (req, res, next) => {
     try {
@@ -41,4 +39,6 @@ module.exports = (app, passport) => {
       }
     },
   );
+
+  return router;
 };
