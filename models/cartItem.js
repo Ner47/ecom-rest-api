@@ -5,7 +5,7 @@ module.exports = class CartItemModel {
   static async create(data) {
     try {
       const statement =
-        pgp.helpers.insert(data, null, "cartItems") + "RETURNING *";
+        pgp.helpers.insert(data, null, "cartitems") + " RETURNING *";
 
       const result = await db.query(statement);
 
@@ -62,11 +62,11 @@ module.exports = class CartItemModel {
     try {
       const statement = `Select
                           ci.qty,
-                          ci.id AS "cartItemId",
+                          ci.id AS cartItemId,
                           p.*
-                         From "cartItems" ci
-                         INNER JOIN products p ON p.id = ci."productId"
-                         WHERE "cartId" = $1`;
+                         From cartItems ci
+                         INNER JOIN products p ON p.id = ci.productId
+                         WHERE cartId = $1`;
 
       const values = [cartId];
 

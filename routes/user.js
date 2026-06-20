@@ -28,7 +28,6 @@ module.exports = (passport) => {
       try {
         const { userId } = req.params;
         const data = req.body;
-        console.log(req.user.id);
         const response = await UserServiceInstance.update({
           id: req.user.id,
           ...data,

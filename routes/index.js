@@ -11,7 +11,7 @@ module.exports = (app, passport) => {
   apiRouter.use("/auth", authRouter(passport));
   apiRouter.use("/users", userRouter(passport));
   apiRouter.use("/products", productRouter(passport));
-  apiRouter.use("/carts", cartRouter(passport));
+  apiRouter.use("/cart", cartRouter(passport));
   apiRouter.use("/orders", orderRouter(passport));
 
   app.use("/api", apiRouter);

@@ -2,6 +2,7 @@ const createError = require("http-errors");
 const CartModel = require("../models/cart");
 const OrderModel = require("../models/order");
 const CartItemModel = require("../models/cartItem");
+const { STRIPE_SECRET_KEY } = require("../config");
 
 module.exports = class CartService {
   async create(data) {
@@ -12,7 +13,8 @@ module.exports = class CartService {
         throw createError(401, "Bad request");
       }
 
-      const cart = await CartModel.create(userId);
+      const Cart = new CartModel();
+      const cart = await Cart.create(userId);
 
       return cart;
     } catch (err) {
@@ -22,7 +24,12 @@ module.exports = class CartService {
 
   async loadCart(userId) {
     try {
-      const product = await CartModel.findOneByUser(userId);
+      let cart = await CartModel.findOneByUser(userId);
+
+      if (cart === null) {
+        const newCart = new CartModel();
+        cart = await newCart.create(userId);
+      }
 
       const items = await CartItemModel.find(cart.id);
       cart.items = items;
@@ -35,9 +42,30 @@ module.exports = class CartService {
 
   async addItem(userId, item) {
     try {
-      const cart = await CartModel.findOneByUser(userId);
+      let cart = await CartModel.findOneByUser(userId);
 
-      const cartItem = await CartItemModel.create({ cartId: cart.id, ...item });
+      if (cart === null) {
+        const newCart = new CartModel();
+        cart = await newCart.create(userId);
+      }
+      const productId = Number(item.productId);
+      const qty = Number(item.qty);
+
+      if (!Number.isInteger(productId) || productId <= 0) {
+        throw createError(400, "Invalid productId");
+      }
+
+      if (!Number.isInteger(qty) || qty <= 0) {
+        throw createError(400, "Invalid qty");
+      }
+
+      const cartItemData = {
+        cartid: Number(cart.id),
+        productid: productId,
+        qty,
+      };
+
+      const cartItem = await CartItemModel.create(cartItemData);
 
       return cartItem;
     } catch (err) {
@@ -71,7 +99,7 @@ module.exports = class CartService {
 
   async checkout(cartId, userId, paymentInfo) {
     try {
-      const stripe = require("stripe")("sk_test_FOY6txFJqPQvJJQxJ8jpeLYQ");
+      const stripe = require("stripe")(STRIPE_SECRET_KEY);
       const cartItems = await CartItemModel.find(cartId);
 
       const total = cartItems.reduce((total, item) => {

@@ -7,7 +7,7 @@ const CartServiceInstance = new CartService();
 module.exports = (passport) => {
   const router = express.Router();
 
-  router.get("/mine", async (req, res, next) => {
+  router.get("/", ensureAuthenticated, async (req, res, next) => {
     try {
       const { id } = req.user;
 
@@ -19,10 +19,9 @@ module.exports = (passport) => {
     }
   });
 
-  router.post("/mine", async (req, res, next) => {
+  router.post("/", ensureAuthenticated, async (req, res, next) => {
     try {
       const { id } = req.user;
-
       const response = await CartServiceInstance.create({ userId: id });
       res.status(200).send(response);
     } catch (err) {
@@ -30,7 +29,7 @@ module.exports = (passport) => {
     }
   });
 
-  router.post("/mine/items", async (req, res, next) => {
+  router.post("/items", ensureAuthenticated, async (req, res, next) => {
     try {
       const { id } = req.user;
       const data = req.body;
@@ -42,23 +41,23 @@ module.exports = (passport) => {
     }
   });
 
-  router.put("/mine/items/:cartItemId", async (req, res, next) => {
+  router.put("/items/:itemId", async (req, res, next) => {
     try {
-      const { cartItemId } = req.params;
+      const { itemId } = req.params;
       const data = req.body;
 
-      const response = await CartServiceInstance.update(cartItemId, data);
+      const response = await CartServiceInstance.update(itemId, data);
       res.status(200).send(response);
     } catch (err) {
       next(err);
     }
   });
 
-  router.delete("/mine/items/:cartItemId", async (req, res, next) => {
+  router.delete("/items/:itemId", async (req, res, next) => {
     try {
-      const { cartItemId } = req.params;
+      const { itemId } = req.params;
 
-      const response = await CartServiceInstance.removeItem(cartItemId);
+      const response = await CartServiceInstance.removeItem(itemId);
 
       res.status(200).send(response);
     } catch (err) {
@@ -66,7 +65,7 @@ module.exports = (passport) => {
     }
   });
 
-  router.post("/mine/checkout", async (req, res, next) => {
+  router.post("/checkout", ensureAuthenticated, async (req, res, next) => {
     try {
       const { id } = req.user;
       const { cartId, paymentInfo } = req.body;

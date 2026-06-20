@@ -6,15 +6,15 @@ module.exports = class CartModel {
   constructor(data = {}) {
     this.created = data.created || moment.utc().toISOString();
     this.modified = moment.utc().toISOString();
-    this.converted = data.converted || null;
-    this.isActive = data.isActive || true;
+    // this.converted = data.converted || null;
+    // this.isActive = data.isActive || true;
   }
 
-  async create(userId) {
+  async create(userid) {
     try {
-      const data = { userId, ...this };
-
-      const statement = pgp.helpers.insert(data, null, "carts") + "RETURNING *";
+      const data = { userid, ...this };
+      const statement =
+        pgp.helpers.insert(data, null, "carts") + " RETURNING *";
 
       const result = await db.query(statement);
 
@@ -31,7 +31,7 @@ module.exports = class CartModel {
   static async findOneByUser(userId) {
     try {
       const statement = `Select *
-                         From products
+                         From carts
                          WHERE userId = $1`;
 
       const values = [userId];
@@ -51,7 +51,7 @@ module.exports = class CartModel {
   static async findOneById(id) {
     try {
       const statement = `Select *
-                         From products
+                         From carts
                          WHERE id = $1`;
 
       const values = [id];
